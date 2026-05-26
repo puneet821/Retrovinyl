@@ -6,8 +6,8 @@ import './PlaybackControls.css';
 const PlaybackControls: React.FC = () => {
   const isPlaying = usePlayerStore((state) => state.isPlaying);
   const togglePlay = usePlayerStore((state) => state.togglePlay);
-  const skipForward = usePlayerStore((state) => state.skipForward);
-  const skipBackward = usePlayerStore((state) => state.skipBackward);
+  const playNext = usePlayerStore((state) => state.playNext);
+  const playPrevious = usePlayerStore((state) => state.playPrevious);
 
   return (
     <div className="playback-controls">
@@ -17,12 +17,12 @@ const PlaybackControls: React.FC = () => {
       </button>
       
       <div className="right-controls">
-        <button className="control-group" onClick={skipBackward}>
+        <button className="control-group" onClick={playPrevious}>
           <div className="pill-btn small-pill"></div>
           <SkipBack size={18} className="control-icon" fill="currentColor" />
         </button>
         
-        <button className="control-group" onClick={skipForward}>
+        <button className="control-group" onClick={playNext}>
           <div className="pill-btn small-pill"></div>
           <SkipForward size={18} className="control-icon" fill="currentColor" />
         </button>
