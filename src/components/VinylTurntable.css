@@ -1,19 +1,17 @@
 .turntable-container {
   position: absolute;
   top: 5vh;
-  left: -50vw;
-  width: 140vw;
-  height: 140vw;
+  left: -50%;
+  width: 140%;
+  aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .turntable-platter {
-  width: 140vw;
-  height: 140vw;
-  max-width: 900px;
-  max-height: 900px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   background: transparent;
   display: flex;
@@ -22,10 +20,8 @@
 }
 
 .vinyl-record {
-  width: 135vw;
-  height: 135vw;
-  max-width: 860px;
-  max-height: 860px;
+  width: 96%;
+  height: 96%;
   border-radius: 50%;
   background: url('/vinyl_splatter.png') center/cover no-repeat, radial-gradient(circle, rgba(90, 140, 180, 0.5) 0%, rgba(30, 80, 130, 0.7) 80%, rgba(10, 40, 80, 0.9) 100%);
   backdrop-filter: blur(8px);
@@ -33,7 +29,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: inset 0 0 10px rgba(255,255,255,0.2), 0 15px 35px rgba(0,0,0,0.4);
+  /* Removed spinning drop shadow */
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.2);
 }
 
 .record-grooves {
