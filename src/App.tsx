@@ -48,8 +48,7 @@ function App() {
         }
       });
       audioRef.current.addEventListener('ended', () => {
-        pause();
-        setPosition(0);
+        usePlayerStore.getState().playNext();
       });
     }
 

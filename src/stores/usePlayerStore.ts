@@ -49,6 +49,13 @@ interface PlayerState {
   setIsSeeking: (isSeeking: boolean) => void;
   requestedSeekTime: number | null;
   requestSeek: (time: number | null) => void;
+  
+  // Queue Management
+  currentQueue: Track[];
+  currentQueueIndex: number;
+  setQueue: (tracks: Track[], startIndex: number) => void;
+  playNext: () => void;
+  playPrevious: () => void;
 }
 
 const loadCustomPlaylists = (): CustomPlaylist[] => {
@@ -135,7 +142,56 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   pause: () => set({ isPlaying: false }),
   togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
   
-  setTrack: (track) => set({ currentTrack: track, isPlaying: true, position: 0 }),
+  currentQueue: [],
+  currentQueueIndex: -1,
+  
+  setQueue: (tracks, startIndex) => set({ 
+    currentQueue: tracks, 
+    currentQueueIndex: startIndex,
+    currentTrack: tracks[startIndex] || null,
+    isPlaying: !!tracks[startIndex],
+    position: 0
+  }),
+  
+  playNext: () => set((state) => {
+    if (state.currentQueue.length > 0 && state.currentQueueIndex < state.currentQueue.length - 1) {
+      const nextIndex = state.currentQueueIndex + 1;
+      return {
+        currentQueueIndex: nextIndex,
+        currentTrack: state.currentQueue[nextIndex],
+        isPlaying: true,
+        position: 0
+      };
+    }
+    // If no queue or at end, just pause
+    return { isPlaying: false, position: 0 };
+  }),
+  
+  playPrevious: () => set((state) => {
+    if (state.currentQueue.length > 0 && state.currentQueueIndex > 0) {
+      // If position > 3 seconds, just restart song
+      if (state.position > 3) {
+        return { position: 0, requestedSeekTime: 0 };
+      }
+      const prevIndex = state.currentQueueIndex - 1;
+      return {
+        currentQueueIndex: prevIndex,
+        currentTrack: state.currentQueue[prevIndex],
+        isPlaying: true,
+        position: 0
+      };
+    }
+    return { position: 0, requestedSeekTime: 0 };
+  }),
+  
+  setTrack: (track) => set({ 
+    currentTrack: track, 
+    isPlaying: true, 
+    position: 0,
+    // Clear queue when a single track is played directly (e.g., from search)
+    currentQueue: [track],
+    currentQueueIndex: 0
+  }),
   setPosition: (position) => set({ position }),
   setDuration: (duration) => set({ duration }),
   

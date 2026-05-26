@@ -9,7 +9,7 @@ const colors = [
 ];
 
 const PlaylistStack: React.FC = () => {
-  const { customPlaylists, setTrack, setIsPlaylistViewOpen: closeView } = usePlayerStore();
+  const { customPlaylists, setTrack, setQueue, setIsPlaylistViewOpen: closeView } = usePlayerStore();
   const [selectedPlaylist, setSelectedPlaylist] = React.useState<CustomPlaylist | null>(null);
   const [playingTrackId, setPlayingTrackId] = React.useState<string | null>(null);
 
@@ -17,9 +17,13 @@ const PlaylistStack: React.FC = () => {
     setSelectedPlaylist(playlist);
   };
 
-  const handlePlayTrack = (track: any) => {
+  const handlePlayTrack = (track: any, index: number) => {
+    if (selectedPlaylist) {
+      setQueue(selectedPlaylist.tracks, index);
+    } else {
+      setTrack(track);
+    }
     setPlayingTrackId(track.id);
-    setTrack(track);
     closeView(false);
   };
 
@@ -47,7 +51,7 @@ const PlaylistStack: React.FC = () => {
           </div>
           <div className="track-list">
             {selectedPlaylist.tracks.map((t, i) => (
-              <div key={t.id + i} className="track-item glass" onClick={() => handlePlayTrack(t)}>
+              <div key={t.id + i} className="track-item glass" onClick={() => handlePlayTrack(t, i)}>
                 <img src={t.artwork} alt="" className="track-thumb" />
                 <div className="track-info-list">
                   <div className="track-name">{t.title}</div>
