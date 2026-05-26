@@ -34,9 +34,14 @@ export const fetchUserPlaylists = async (token: string): Promise<SpotifyPlaylist
   }
 };
 
-export const fetchPlaylistTracks = async (token: string, playlistId: string): Promise<any[]> => {
+export const fetchPlaylistTracks = async (token: string, tracksUrl: string): Promise<any[]> => {
   try {
-    const response = await fetch(`https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks?limit=50`, {
+    // If the tracksUrl is just an ID, keep the old behavior. Otherwise use the href.
+    const url = tracksUrl.startsWith('http') 
+      ? `${tracksUrl}?limit=50` 
+      : `https://api.spotify.com/v1/playlists/${encodeURIComponent(tracksUrl)}/tracks?limit=50`;
+      
+    const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${token}`
       }

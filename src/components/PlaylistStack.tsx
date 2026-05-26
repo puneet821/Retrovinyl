@@ -22,12 +22,12 @@ const PlaylistStack: React.FC = () => {
     if (!spotifyToken) return;
     setLoadingId(playlist.id);
     try {
-      const fetchedTracks = await fetchPlaylistTracks(spotifyToken, playlist.id);
+      const fetchedTracks = await fetchPlaylistTracks(spotifyToken, playlist.tracks.href || playlist.id);
       setTracks(fetchedTracks);
       setSelectedPlaylist(playlist);
     } catch (err: any) {
       console.error(err);
-      const isAuthError = err.message?.includes('expired') || err.message?.includes('401') || err.message?.includes('Forbidden') || err.message?.includes('403');
+      const isAuthError = err.message?.includes('expired') || err.message?.includes('401');
       if (isAuthError) {
         usePlayerStore.getState().setSpotifyToken(null);
         localStorage.removeItem('spotify_access_token');
