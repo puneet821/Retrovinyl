@@ -54,8 +54,8 @@ interface PlayerState {
   currentQueue: Track[];
   currentQueueIndex: number;
   setQueue: (tracks: Track[], startIndex: number) => void;
-  playNext: () => void;
-  playPrevious: () => void;
+  playNext: (audioElement?: HTMLAudioElement) => void;
+  playPrevious: (audioElement?: HTMLAudioElement) => void;
 }
 
 const loadCustomPlaylists = (): CustomPlaylist[] => {
@@ -153,34 +153,53 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     position: 0
   }),
   
-  playNext: () => set((state) => {
+  playNext: (audioElement) => set((state) => {
     if (state.currentQueue.length > 0 && state.currentQueueIndex < state.currentQueue.length - 1) {
       const nextIndex = state.currentQueueIndex + 1;
+      const nextTrack = state.currentQueue[nextIndex];
+      
+      // Synchronous background loading
+      if (audioElement) {
+        audioElement.src = nextTrack.url;
+        audioElement.load();
+        audioElement.play().catch(e => console.warn('Sync playback prevented', e));
+      }
+      
       return {
         currentQueueIndex: nextIndex,
-        currentTrack: state.currentQueue[nextIndex],
+        currentTrack: nextTrack,
         isPlaying: true,
         position: 0
       };
     }
-    // If no queue or at end, just pause
     return { isPlaying: false, position: 0 };
   }),
   
-  playPrevious: () => set((state) => {
+  playPrevious: (audioElement) => set((state) => {
     if (state.currentQueue.length > 0 && state.currentQueueIndex > 0) {
-      // If position > 3 seconds, just restart song
       if (state.position > 3) {
+        if (audioElement) audioElement.currentTime = 0;
         return { position: 0, requestedSeekTime: 0 };
       }
+      
       const prevIndex = state.currentQueueIndex - 1;
+      const prevTrack = state.currentQueue[prevIndex];
+      
+      // Synchronous background loading
+      if (audioElement) {
+        audioElement.src = prevTrack.url;
+        audioElement.load();
+        audioElement.play().catch(e => console.warn('Sync playback prevented', e));
+      }
+
       return {
         currentQueueIndex: prevIndex,
-        currentTrack: state.currentQueue[prevIndex],
+        currentTrack: prevTrack,
         isPlaying: true,
         position: 0
       };
     }
+    if (audioElement) audioElement.currentTime = 0;
     return { position: 0, requestedSeekTime: 0 };
   }),
   

@@ -45,10 +45,10 @@ function App() {
         usePlayerStore.getState().pause();
       });
       navigator.mediaSession.setActionHandler('previoustrack', () => {
-        usePlayerStore.getState().playPrevious();
+        usePlayerStore.getState().playPrevious(audioRef.current || undefined);
       });
       navigator.mediaSession.setActionHandler('nexttrack', () => {
-        usePlayerStore.getState().playNext();
+        usePlayerStore.getState().playNext(audioRef.current || undefined);
       });
     }
 
@@ -227,7 +227,7 @@ function App() {
         onLoadedMetadata={() => {
           if (audioRef.current) setDuration(audioRef.current.duration);
         }}
-        onEnded={() => usePlayerStore.getState().playNext()}
+        onEnded={() => usePlayerStore.getState().playNext(audioRef.current || undefined)}
         onPlay={() => usePlayerStore.setState({ isPlaying: true })}
         onPause={() => usePlayerStore.setState({ isPlaying: false })}
       />
