@@ -1,7 +1,7 @@
 .turntable-container {
   position: absolute;
   top: 5vh;
-  left: -30vw;
+  left: -50vw;
   width: 140vw;
   height: 140vw;
   display: flex;
@@ -12,8 +12,8 @@
 .turntable-platter {
   width: 140vw;
   height: 140vw;
-  max-width: 800px;
-  max-height: 800px;
+  max-width: 900px;
+  max-height: 900px;
   border-radius: 50%;
   background: transparent;
   display: flex;
@@ -24,8 +24,8 @@
 .vinyl-record {
   width: 135vw;
   height: 135vw;
-  max-width: 780px;
-  max-height: 780px;
+  max-width: 860px;
+  max-height: 860px;
   border-radius: 50%;
   background: url('/vinyl_splatter.png') center/cover no-repeat, radial-gradient(circle, rgba(90, 140, 180, 0.5) 0%, rgba(30, 80, 130, 0.7) 80%, rgba(10, 40, 80, 0.9) 100%);
   backdrop-filter: blur(8px);

@@ -1,8 +1,8 @@
 .tone-arm-container {
   position: absolute;
-  top: 10vh;
-  right: 5vw;
-  width: 180px;
+  top: 8vh;
+  right: -5vw;
+  width: 150px;
   height: 450px;
   transform-origin: 45px 45px;
   transition: transform 0.3s ease-out;
