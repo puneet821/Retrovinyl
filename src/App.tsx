@@ -5,13 +5,14 @@ import PlaybackControls from './components/PlaybackControls';
 import ThemePicker from './components/ThemePicker';
 import SearchBar from './components/SearchBar';
 import ConnectionModal from './components/ConnectionModal';
-import SideMenu from './components/SideMenu';
+import HamburgerMenu from './components/HamburgerMenu';
 import { usePlayerStore } from './stores/usePlayerStore';
 import { useThemeStore } from './stores/useThemeStore';
 import { handleSpotifyCallback } from './services/spotifyAuth';
 import { fetchUserPlaylists } from './services/spotifyApi';
 import PlaylistStack from './components/PlaylistStack';
-import { Settings, Menu, Search, Library } from 'lucide-react';
+import { Settings, Menu, Search, Library, Plus } from 'lucide-react';
+import AddToPlaylistModal from './components/AddToPlaylistModal';
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
   const [showConnectionModal, setShowConnectionModal] = React.useState(false);
   const [showSideMenu, setShowSideMenu] = React.useState(false);
   const [showSearch, setShowSearch] = React.useState(false);
+  const [addingTrack, setAddingTrack] = React.useState<any | null>(null);
 
   // Initialize Audio Element and Check Spotify Callback
   useEffect(() => {
@@ -172,7 +174,19 @@ function App() {
 
         <div className="bottom-controls-wrapper">
           <div className="track-info">
-            <h2 className="track-title">{currentTrack?.title || 'No track selected'}</h2>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <h2 className="track-title">{currentTrack?.title || 'No track selected'}</h2>
+              {currentTrack && (
+                <button 
+                  className="add-to-playlist-icon-btn" 
+                  onClick={() => setAddingTrack(currentTrack)}
+                  title="Add to Playlist"
+                  style={{ padding: '4px', marginTop: '-4px' }}
+                >
+                  <Plus size={20} />
+                </button>
+              )}
+            </div>
             <p className="track-artist">{currentTrack?.artist || 'Unknown Artist'}</p>
           </div>
 
@@ -199,10 +213,17 @@ function App() {
         </div>
       </main>
 
-      <SideMenu isOpen={showSideMenu} onClose={() => setShowSideMenu(false)} />
+      <HamburgerMenu isOpen={showSideMenu} onClose={() => setShowSideMenu(false)} />
 
       {showConnectionModal && (
         <ConnectionModal onClose={() => setShowConnectionModal(false)} />
+      )}
+
+      {addingTrack && (
+        <AddToPlaylistModal 
+          track={addingTrack} 
+          onClose={() => setAddingTrack(null)} 
+        />
       )}
     </div>
   );

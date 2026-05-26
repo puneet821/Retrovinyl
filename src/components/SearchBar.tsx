@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Loader2, X } from 'lucide-react';
+import { Search, Loader2, X, Plus } from 'lucide-react';
 import { searchSongs } from '../services/api';
 import { usePlayerStore } from '../stores/usePlayerStore';
 import type { Track } from '../stores/usePlayerStore';
+import AddToPlaylistModal from './AddToPlaylistModal';
 import './SearchBar.css';
 
 const SearchBar: React.FC = () => {
@@ -11,6 +12,7 @@ const SearchBar: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState('');
+  const [addingTrack, setAddingTrack] = useState<Track | null>(null);
 
   const setTrack = usePlayerStore((state) => state.setTrack);
 
@@ -62,12 +64,24 @@ const SearchBar: React.FC = () => {
           </div>
           <ul className="results-list">
             {results.map((track) => (
-              <li key={track.id} className="result-item" onClick={() => playTrack(track)}>
-                <img src={track.artwork} alt={track.title} className="result-artwork" />
-                <div className="result-info">
-                  <p className="result-title">{track.title}</p>
-                  <p className="result-artist">{track.artist}</p>
+              <li key={track.id} className="result-item">
+                <div className="result-main-clickable" onClick={() => playTrack(track)}>
+                  <img src={track.artwork} alt={track.title} className="result-artwork" />
+                  <div className="result-info">
+                    <p className="result-title">{track.title}</p>
+                    <p className="result-artist">{track.artist}</p>
+                  </div>
                 </div>
+                <button 
+                  className="add-to-playlist-icon-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setAddingTrack(track);
+                  }}
+                  title="Add to Playlist"
+                >
+                  <Plus size={20} />
+                </button>
               </li>
             ))}
           </ul>
@@ -75,6 +89,13 @@ const SearchBar: React.FC = () => {
       )}
       
       {error && <div className="search-error">{error}</div>}
+
+      {addingTrack && (
+        <AddToPlaylistModal 
+          track={addingTrack} 
+          onClose={() => setAddingTrack(null)} 
+        />
+      )}
     </div>
   );
 };

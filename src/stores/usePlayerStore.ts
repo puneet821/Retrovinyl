@@ -10,9 +10,18 @@ export interface Track {
   uri?: string; // Spotify URI
 }
 
+export interface CustomPlaylist {
+  id: string;
+  name: string;
+  tracks: Track[];
+  createdAt: number;
+  coverUrl?: string;
+}
+
 interface PlayerState {
   spotifyToken: string | null;
   playlists: SpotifyPlaylist[];
+  customPlaylists: CustomPlaylist[];
   isPlaylistViewOpen: boolean;
   currentTrack: Track | null;
   isPlaying: boolean;
@@ -20,6 +29,13 @@ interface PlayerState {
   duration: number;
   setSpotifyToken: (token: string | null) => void;
   setPlaylists: (playlists: SpotifyPlaylist[]) => void;
+  
+  // Custom Playlist Actions
+  createCustomPlaylist: (name: string) => void;
+  addTrackToCustomPlaylist: (playlistId: string, track: Track) => void;
+  removeTrackFromCustomPlaylist: (playlistId: string, trackId: string) => void;
+  deleteCustomPlaylist: (playlistId: string) => void;
+  
   setIsPlaylistViewOpen: (isOpen: boolean) => void;
   play: () => void;
   pause: () => void;
@@ -35,9 +51,23 @@ interface PlayerState {
   requestSeek: (time: number | null) => void;
 }
 
+const loadCustomPlaylists = (): CustomPlaylist[] => {
+  try {
+    const saved = localStorage.getItem('retro_custom_playlists');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveCustomPlaylists = (playlists: CustomPlaylist[]) => {
+  localStorage.setItem('retro_custom_playlists', JSON.stringify(playlists));
+};
+
 export const usePlayerStore = create<PlayerState>((set) => ({
   spotifyToken: localStorage.getItem('spotify_access_token') || null,
   playlists: [],
+  customPlaylists: loadCustomPlaylists(),
   isPlaylistViewOpen: false,
   currentTrack: null,
   isPlaying: false,
@@ -48,6 +78,55 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   
   setSpotifyToken: (token) => set({ spotifyToken: token }),
   setPlaylists: (playlists) => set({ playlists }),
+  
+  createCustomPlaylist: (name) => set((state) => {
+    const newPlaylist: CustomPlaylist = {
+      id: Date.now().toString(),
+      name,
+      tracks: [],
+      createdAt: Date.now(),
+    };
+    const updated = [...state.customPlaylists, newPlaylist];
+    saveCustomPlaylists(updated);
+    return { customPlaylists: updated };
+  }),
+  
+  addTrackToCustomPlaylist: (playlistId, track) => set((state) => {
+    const updated = state.customPlaylists.map(p => {
+      if (p.id === playlistId) {
+        // Prevent duplicate tracks in the same playlist
+        if (p.tracks.some(t => t.id === track.id)) return p;
+        const newTracks = [...p.tracks, track];
+        return {
+          ...p,
+          tracks: newTracks,
+          coverUrl: newTracks[0]?.artwork || p.coverUrl
+        };
+      }
+      return p;
+    });
+    saveCustomPlaylists(updated);
+    return { customPlaylists: updated };
+  }),
+  
+  removeTrackFromCustomPlaylist: (playlistId, trackId) => set((state) => {
+    const updated = state.customPlaylists.map(p => {
+      if (p.id === playlistId) {
+        const newTracks = p.tracks.filter(t => t.id !== trackId);
+        return { ...p, tracks: newTracks, coverUrl: newTracks[0]?.artwork };
+      }
+      return p;
+    });
+    saveCustomPlaylists(updated);
+    return { customPlaylists: updated };
+  }),
+  
+  deleteCustomPlaylist: (playlistId) => set((state) => {
+    const updated = state.customPlaylists.filter(p => p.id !== playlistId);
+    saveCustomPlaylists(updated);
+    return { customPlaylists: updated };
+  }),
+
   setIsPlaylistViewOpen: (isPlaylistViewOpen) => set({ isPlaylistViewOpen }),
   setIsSeeking: (isSeeking) => set({ isSeeking }),
   requestSeek: (time) => set({ requestedSeekTime: time }),

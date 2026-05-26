@@ -1,9 +1,6 @@
 import React from 'react';
 import { usePlayerStore } from '../stores/usePlayerStore';
-import { fetchPlaylistTracks } from '../services/spotifyApi';
-import type { SpotifyPlaylist } from '../services/spotifyApi';
-import { initiateSpotifyLogin } from '../services/spotifyAuth';
-import { playSpotifyTrackViaSaavn } from '../services/api';
+import type { CustomPlaylist } from '../stores/usePlayerStore';
 import './PlaylistStack.css';
 import { X, Play } from 'lucide-react';
 
@@ -12,81 +9,19 @@ const colors = [
 ];
 
 const PlaylistStack: React.FC = () => {
-  const { playlists, spotifyToken, setTrack, setIsPlaylistViewOpen: closeView } = usePlayerStore();
-  const [loadingId, setLoadingId] = React.useState<string | null>(null);
-  const [selectedPlaylist, setSelectedPlaylist] = React.useState<SpotifyPlaylist | null>(null);
-  const [tracks, setTracks] = React.useState<any[]>([]);
+  const { customPlaylists, setTrack, setIsPlaylistViewOpen: closeView } = usePlayerStore();
+  const [selectedPlaylist, setSelectedPlaylist] = React.useState<CustomPlaylist | null>(null);
   const [playingTrackId, setPlayingTrackId] = React.useState<string | null>(null);
 
-  const handleSelectPlaylist = async (playlist: SpotifyPlaylist) => {
-    if (!spotifyToken) return;
-    setLoadingId(playlist.id);
-    try {
-      const fetchedTracks = await fetchPlaylistTracks(spotifyToken, playlist.tracks?.href || playlist.id);
-      setTracks(fetchedTracks);
-      setSelectedPlaylist(playlist);
-    } catch (err: any) {
-      console.error(err);
-      const isAuthError = err.message?.includes('expired') || err.message?.includes('401');
-      if (isAuthError) {
-        usePlayerStore.getState().setSpotifyToken(null);
-        localStorage.removeItem('spotify_access_token');
-        alert("Spotify permissions missing or expired. Please click 'Connect Spotify' again to grant playlist access.");
-      } else if (err.message?.includes('Forbidden') || err.message?.includes('403')) {
-        alert("Spotify Error: Forbidden.\n\nBecause your Spotify App is in 'Development Mode', Spotify strictly blocks you from opening playlists created by other people or by Spotify itself.\n\nTry opening a playlist that YOU created!");
-      } else {
-        alert(err.message || "Failed to load tracks. The playlist might be empty or private.");
-      }
-    } finally {
-      setLoadingId(null);
-    }
+  const handleSelectPlaylist = (playlist: CustomPlaylist) => {
+    setSelectedPlaylist(playlist);
   };
 
-  const handlePlayTrack = async (trackItem: any) => {
-    const t = trackItem.track;
-    if (!t) return;
-    setPlayingTrackId(t.id);
-    
-    try {
-      if (t.preview_url) {
-        setTrack({
-          id: t.id,
-          title: t.name,
-          artist: t.artists.map((a: any) => a.name).join(', '),
-          artwork: t.album.images[0]?.url || '',
-          url: t.preview_url,
-        });
-        closeView(false);
-      } else {
-        // Fallback to Saavn search to get full audio
-        const artistName = t.artists[0]?.name || '';
-        const artwork = t.album.images[0]?.url || '';
-        const saavnTrack = await playSpotifyTrackViaSaavn(t.name, artistName, artwork);
-        setTrack(saavnTrack);
-        closeView(false);
-      }
-    } catch (err) {
-      alert("Could not find audio for this track.");
-      console.error(err);
-    } finally {
-      setPlayingTrackId(null);
-    }
+  const handlePlayTrack = (track: any) => {
+    setPlayingTrackId(track.id);
+    setTrack(track);
+    closeView(false);
   };
-
-  if (!spotifyToken) {
-    return (
-      <div className="playlist-stack-overlay">
-        <div className="playlist-auth-prompt glass-panel">
-          <h2>Spotify Login Required</h2>
-          <p>Connect your Spotify account to view your playlists in 3D.</p>
-          <button className="spotify-login-btn" onClick={initiateSpotifyLogin}>
-            Connect Spotify
-          </button>
-          <button className="close-btn" onClick={() => closeView(false)}>Cancel</button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="playlist-stack-overlay">
@@ -100,37 +35,37 @@ const PlaylistStack: React.FC = () => {
             <button className="back-btn" onClick={() => setSelectedPlaylist(null)}>
               &larr; Back
             </button>
-            <img src={selectedPlaylist.images[0]?.url} alt="" className="detail-cover" />
+            {selectedPlaylist.coverUrl ? (
+              <img src={selectedPlaylist.coverUrl} alt="" className="detail-cover" />
+            ) : (
+              <div className="detail-cover-placeholder"></div>
+            )}
             <div className="detail-info">
               <h2>{selectedPlaylist.name}</h2>
-              <p>{selectedPlaylist.tracks.total} tracks</p>
+              <p>{selectedPlaylist.tracks.length} tracks</p>
             </div>
           </div>
           <div className="track-list">
-            {tracks.map((item, i) => {
-              const t = item.track;
-              if (!t) return null;
-              return (
-                <div key={t.id + i} className="track-item glass" onClick={() => handlePlayTrack(item)}>
-                  <img src={t.album.images[2]?.url || t.album.images[0]?.url} alt="" className="track-thumb" />
-                  <div className="track-info-list">
-                    <div className="track-name">{t.name}</div>
-                    <div className="track-artists">{t.artists.map((a: any) => a.name).join(', ')}</div>
-                  </div>
-                  {playingTrackId === t.id ? (
-                    <div className="spinner small-spinner"></div>
-                  ) : (
-                    <Play size={20} className="track-play-icon" />
-                  )}
+            {selectedPlaylist.tracks.map((t, i) => (
+              <div key={t.id + i} className="track-item glass" onClick={() => handlePlayTrack(t)}>
+                <img src={t.artwork} alt="" className="track-thumb" />
+                <div className="track-info-list">
+                  <div className="track-name">{t.title}</div>
+                  <div className="track-artists">{t.artist}</div>
                 </div>
-              );
-            })}
+                {playingTrackId === t.id ? (
+                  <div className="spinner small-spinner"></div>
+                ) : (
+                  <Play size={20} className="track-play-icon" />
+                )}
+              </div>
+            ))}
           </div>
         </div>
       ) : (
         <div className="perspective-container">
           <div className="stack-wrapper">
-            {playlists.map((playlist, index) => {
+            {customPlaylists.map((playlist, index) => {
               const edgeColor = colors[index % colors.length];
               return (
                 <div 
@@ -143,11 +78,10 @@ const PlaylistStack: React.FC = () => {
                   onClick={() => handleSelectPlaylist(playlist)}
                 >
                   <div className="card-face main-face">
-                    <img src={playlist.images[0]?.url} alt={playlist.name} />
-                    {loadingId === playlist.id && (
-                      <div className="loading-overlay">
-                        <div className="spinner"></div>
-                      </div>
+                    {playlist.coverUrl ? (
+                      <img src={playlist.coverUrl} alt={playlist.name} />
+                    ) : (
+                      <div className="card-face-placeholder">{playlist.name}</div>
                     )}
                     <div className="play-overlay">
                       <Play size={40} fill="white" />
