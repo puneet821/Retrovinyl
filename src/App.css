@@ -62,7 +62,20 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.bottom-controls-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  z-index: 50;
+  padding-bottom: 10px;
 }
 
 .turntable-wrapper {
@@ -71,9 +84,9 @@
 }
 
 .track-info {
-  text-align: center;
-  margin-bottom: 30px;
-  padding: 0 20px;
+  text-align: left;
+  margin-bottom: 20px;
+  padding: 0 10px;
   width: 100%;
 }
 
@@ -98,9 +111,8 @@
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 400px;
-  padding: 0 30px;
-  margin-bottom: 10px;
+  padding: 0 10px;
+  margin-bottom: 20px;
 }
 
 .time {

@@ -9,7 +9,7 @@ import SideMenu from './components/SideMenu';
 import { usePlayerStore } from './stores/usePlayerStore';
 import { useThemeStore } from './stores/useThemeStore';
 import { handleSpotifyCallback } from './services/spotifyAuth';
-import { Settings, Menu } from 'lucide-react';
+import { Settings, Menu, Search } from 'lucide-react';
 import './App.css';
 
 function App() {
@@ -18,6 +18,7 @@ function App() {
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const [showConnectionModal, setShowConnectionModal] = React.useState(false);
   const [showSideMenu, setShowSideMenu] = React.useState(false);
+  const [showSearch, setShowSearch] = React.useState(false);
 
   // Initialize Audio Element and Check Spotify Callback
   useEffect(() => {
@@ -122,17 +123,16 @@ function App() {
         <button className="settings-btn glass" onClick={() => setShowSideMenu(true)} style={{ marginRight: 'auto' }}>
           <Menu size={20} />
         </button>
+        <button className="settings-btn glass" onClick={() => setShowSearch(!showSearch)} style={{ marginLeft: '10px' }}>
+          <Search size={20} />
+        </button>
         <button className="settings-btn glass" onClick={() => setShowConnectionModal(true)} style={{ marginLeft: '10px', marginRight: '10px' }}>
           <Settings size={20} />
         </button>
         <ThemePicker />
       </div>
-      
-      <header className="app-header">
-        <h1 className="now-playing-title">Now Playing</h1>
-      </header>
 
-      <SearchBar />
+      {showSearch && <SearchBar />}
 
       <main className="player-main">
         <div className="turntable-wrapper">
@@ -140,31 +140,33 @@ function App() {
           <ToneArm />
         </div>
 
-        <div className="track-info">
-          <h2 className="track-title">{currentTrack?.title || 'No track selected'}</h2>
-          <p className="track-artist">{currentTrack?.artist || 'Unknown Artist'}</p>
-        </div>
-
-        <div className="progress-container">
-          <span className="time">{formatTime(position)}</span>
-          <div className="progress-bar-container">
-            <input 
-              type="range" 
-              min="0" 
-              max={duration || 100} 
-              value={position} 
-              onChange={handleSeek}
-              className="progress-slider"
-            />
-            <div 
-              className="progress-fill" 
-              style={{ width: `${(position / (duration || 1)) * 100}%` }}
-            ></div>
+        <div className="bottom-controls-wrapper">
+          <div className="track-info">
+            <h2 className="track-title">{currentTrack?.title || 'No track selected'}</h2>
+            <p className="track-artist">{currentTrack?.artist || 'Unknown Artist'}</p>
           </div>
-          <span className="time">{formatTime(duration)}</span>
-        </div>
 
-        <PlaybackControls />
+          <div className="progress-container">
+            <span className="time">{formatTime(position)}</span>
+            <div className="progress-bar-container">
+              <input 
+                type="range" 
+                min="0" 
+                max={duration || 100} 
+                value={position} 
+                onChange={handleSeek}
+                className="progress-slider"
+              />
+              <div 
+                className="progress-fill" 
+                style={{ width: `${(position / (duration || 1)) * 100}%` }}
+              ></div>
+            </div>
+            <span className="time">{formatTime(duration)}</span>
+          </div>
+
+          <PlaybackControls />
+        </div>
       </main>
 
       <SideMenu isOpen={showSideMenu} onClose={() => setShowSideMenu(false)} />

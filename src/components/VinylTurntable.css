@@ -1,48 +1,52 @@
 .turntable-container {
+  position: absolute;
+  top: 5vh;
+  left: -30vw;
+  width: 140vw;
+  height: 140vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 40px 0;
-  position: relative;
 }
 
 .turntable-platter {
-  width: 280px;
-  height: 280px;
+  width: 140vw;
+  height: 140vw;
+  max-width: 800px;
+  max-height: 800px;
   border-radius: 50%;
-  background: #111;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.8);
+  background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .vinyl-record {
-  width: 270px;
-  height: 270px;
+  width: 135vw;
+  height: 135vw;
+  max-width: 780px;
+  max-height: 780px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1c1c1c 0%, #0a0a0a 50%, #1c1c1c 100%);
+  background: url('/vinyl_splatter.png') center/cover no-repeat;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: inset 0 0 5px rgba(255,255,255,0.1);
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.2), 0 15px 35px rgba(0,0,0,0.4);
 }
 
 .record-grooves {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.05);
-  width: 240px;
-  height: 240px;
+  display: none;
 }
 
-.groove-2 { width: 200px; height: 200px; }
-.groove-3 { width: 160px; height: 160px; }
+.groove-2 { display: none; }
+.groove-3 { display: none; }
 
 .record-label {
-  width: 90px;
-  height: 90px;
+  width: 45vw;
+  height: 45vw;
+  max-width: 260px;
+  max-height: 260px;
   border-radius: 50%;
   background: var(--accent);
   display: flex;
@@ -50,7 +54,7 @@
   align-items: center;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  box-shadow: 0 0 15px rgba(0,0,0,0.6);
 }
 
 .album-art {

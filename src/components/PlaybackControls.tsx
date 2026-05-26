@@ -10,22 +10,23 @@ const PlaybackControls: React.FC = () => {
   const skipBackward = usePlayerStore((state) => state.skipBackward);
 
   return (
-    <div className="playback-controls glass-panel">
-      <button className="control-btn" onClick={skipBackward}>
-        <SkipBack size={28} />
+    <div className="playback-controls">
+      <button className="control-group" onClick={togglePlay}>
+        <div className="pill-btn large-pill"></div>
+        <span className="control-label">{isPlaying ? 'PAUSE' : 'PLAY'}</span>
       </button>
       
-      <button className="control-btn play-btn" onClick={togglePlay}>
-        {isPlaying ? (
-          <Pause size={36} fill="currentColor" />
-        ) : (
-          <Play size={36} fill="currentColor" className="play-icon" />
-        )}
-      </button>
-      
-      <button className="control-btn" onClick={skipForward}>
-        <SkipForward size={28} />
-      </button>
+      <div className="right-controls">
+        <button className="control-group" onClick={skipBackward}>
+          <div className="pill-btn small-pill"></div>
+          <SkipBack size={18} className="control-icon" fill="currentColor" />
+        </button>
+        
+        <button className="control-group" onClick={skipForward}>
+          <div className="pill-btn small-pill"></div>
+          <SkipForward size={18} className="control-icon" fill="currentColor" />
+        </button>
+      </div>
     </div>
   );
 };
