@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { SpotifyPlaylist } from '../services/spotifyApi';
+import type { SpotifyPlaylist } from '../services/spotifyApi';
 
 export interface Track {
   id: string;

@@ -10,7 +10,7 @@ const colors = [
 ];
 
 const PlaylistStack: React.FC = () => {
-  const { playlists, spotifyToken, setIsPlaylistViewOpen, setTrack, setIsPlaylistViewOpen: closeView } = usePlayerStore();
+  const { playlists, spotifyToken, setTrack, setIsPlaylistViewOpen: closeView } = usePlayerStore();
   const [loadingId, setLoadingId] = React.useState<string | null>(null);
 
   const handlePlayPlaylist = async (playlistId: string) => {
