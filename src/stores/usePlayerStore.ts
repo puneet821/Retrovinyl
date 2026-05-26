@@ -56,6 +56,10 @@ interface PlayerState {
   setQueue: (tracks: Track[], startIndex: number) => void;
   playNext: (audioElement?: HTMLAudioElement) => void;
   playPrevious: (audioElement?: HTMLAudioElement) => void;
+
+  // EQ Mode
+  eqMode: 'FLAT' | 'BASS' | 'VOCAL' | 'HALL';
+  setEqMode: (mode: 'FLAT' | 'BASS' | 'VOCAL' | 'HALL') => void;
 }
 
 const loadCustomPlaylists = (): CustomPlaylist[] => {
@@ -216,4 +220,7 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   
   skipForward: () => set((state) => ({ requestedSeekTime: Math.min(state.position + 10, state.duration) })),
   skipBackward: () => set((state) => ({ requestedSeekTime: Math.max(state.position - 10, 0) })),
+
+  eqMode: 'FLAT',
+  setEqMode: (mode) => set({ eqMode: mode }),
 }));
