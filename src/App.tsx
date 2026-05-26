@@ -13,6 +13,7 @@ import { fetchUserPlaylists } from './services/spotifyApi';
 import PlaylistStack from './components/PlaylistStack';
 import { Settings, Menu, Search, Library, Plus } from 'lucide-react';
 import AddToPlaylistModal from './components/AddToPlaylistModal';
+import { updateMediaSessionWithVinyl } from './services/mediaSession';
 import './App.css';
 
 function App() {
@@ -189,6 +190,8 @@ function App() {
           audioRef.current.play().catch(e => console.warn('Playback prevented', e));
         }
       }
+      // Push vinyl artwork to lock screen
+      updateMediaSessionWithVinyl(currentTrack.title, currentTrack.artist, currentTrack.artwork);
     }
   }, [currentTrack, isPlaying]);
 
