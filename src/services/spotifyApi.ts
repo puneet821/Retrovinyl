@@ -6,7 +6,7 @@ export interface SpotifyPlaylist {
   name: string;
   images: { url: string; height: number; width: number }[];
   owner: { display_name: string };
-  tracks: { total: number };
+  tracks: { href: string; total: number };
 }
 
 export const fetchUserPlaylists = async (token: string): Promise<SpotifyPlaylist[]> => {
