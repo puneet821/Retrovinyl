@@ -297,7 +297,7 @@ function App() {
               />
               <div 
                 className="progress-fill" 
-                style={{ width: `${(position / (duration || 1)) * 100}%` }}
+                style={{ width: `${duration > 0 ? Math.min((position / duration) * 100, 100) : 0}%` }}
               ></div>
             </div>
             <span className="time">{formatTime(duration)}</span>
