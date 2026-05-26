@@ -9,11 +9,13 @@ import SideMenu from './components/SideMenu';
 import { usePlayerStore } from './stores/usePlayerStore';
 import { useThemeStore } from './stores/useThemeStore';
 import { handleSpotifyCallback } from './services/spotifyAuth';
-import { Settings, Menu, Search } from 'lucide-react';
+import { fetchUserPlaylists } from './services/spotifyApi';
+import PlaylistStack from './components/PlaylistStack';
+import { Settings, Menu, Search, Library } from 'lucide-react';
 import './App.css';
 
 function App() {
-  const { currentTrack, setTrack, isPlaying, pause, setPosition, setDuration, position, duration, setSpotifyToken } = usePlayerStore();
+  const { currentTrack, setTrack, isPlaying, pause, setPosition, setDuration, position, duration, spotifyToken, setSpotifyToken, setPlaylists, isPlaylistViewOpen, setIsPlaylistViewOpen } = usePlayerStore();
   const activeTheme = useThemeStore((state) => state.activeTheme);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const [showConnectionModal, setShowConnectionModal] = React.useState(false);
@@ -66,6 +68,15 @@ function App() {
       }
     }
   }, []);
+
+  // Fetch playlists when token is available
+  useEffect(() => {
+    if (spotifyToken) {
+      fetchUserPlaylists(spotifyToken)
+        .then(data => setPlaylists(data))
+        .catch(err => console.error(err));
+    }
+  }, [spotifyToken, setPlaylists]);
 
   // Handle Play/Pause synchronization
   useEffect(() => {
@@ -134,11 +145,16 @@ function App() {
         <button className="settings-btn glass" onClick={() => setShowSearch(!showSearch)} style={{ marginLeft: '10px' }}>
           <Search size={20} />
         </button>
+        <button className="settings-btn glass" onClick={() => setIsPlaylistViewOpen(!isPlaylistViewOpen)} style={{ marginLeft: '10px' }}>
+          <Library size={20} />
+        </button>
         <button className="settings-btn glass" onClick={() => setShowConnectionModal(true)} style={{ marginLeft: '10px', marginRight: '10px' }}>
           <Settings size={20} />
         </button>
         <ThemePicker />
       </div>
+
+      {isPlaylistViewOpen && <PlaylistStack />}
 
       {showSearch && <SearchBar />}
 

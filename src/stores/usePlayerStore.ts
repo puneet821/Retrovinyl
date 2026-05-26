@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { SpotifyPlaylist } from '../services/spotifyApi';
 
 export interface Track {
   id: string;
@@ -11,11 +12,15 @@ export interface Track {
 
 interface PlayerState {
   spotifyToken: string | null;
+  playlists: SpotifyPlaylist[];
+  isPlaylistViewOpen: boolean;
   currentTrack: Track | null;
   isPlaying: boolean;
   position: number;
   duration: number;
   setSpotifyToken: (token: string | null) => void;
+  setPlaylists: (playlists: SpotifyPlaylist[]) => void;
+  setIsPlaylistViewOpen: (isOpen: boolean) => void;
   play: () => void;
   pause: () => void;
   togglePlay: () => void;
@@ -32,6 +37,8 @@ interface PlayerState {
 
 export const usePlayerStore = create<PlayerState>((set) => ({
   spotifyToken: localStorage.getItem('spotify_access_token') || null,
+  playlists: [],
+  isPlaylistViewOpen: false,
   currentTrack: null,
   isPlaying: false,
   position: 0,
@@ -40,6 +47,8 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   requestedSeekTime: null,
   
   setSpotifyToken: (token) => set({ spotifyToken: token }),
+  setPlaylists: (playlists) => set({ playlists }),
+  setIsPlaylistViewOpen: (isPlaylistViewOpen) => set({ isPlaylistViewOpen }),
   setIsSeeking: (isSeeking) => set({ isSeeking }),
   requestSeek: (time) => set({ requestedSeekTime: time }),
   

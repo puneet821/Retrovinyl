@@ -1,0 +1,189 @@
+.playlist-stack-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.close-stack-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 1010;
+}
+
+.perspective-container {
+  flex: 1;
+  width: 100%;
+  perspective: 1200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stack-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-style: preserve-3d;
+  padding-bottom: 200px;
+  width: 100%;
+}
+
+.playlist-card-3d {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(60deg) scale(0.9);
+  margin-bottom: -200px; /* Massive negative margin to overlap heavily */
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), margin 0.4s ease;
+  cursor: pointer;
+  z-index: var(--card-index);
+}
+
+.playlist-card-3d:hover {
+  transform: rotateX(45deg) scale(1) translateY(-20px);
+  margin-bottom: -180px;
+  z-index: 100 !important; /* Bring hovered to front */
+}
+
+.card-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #222;
+  box-shadow: 0 30px 40px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.card-face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+.playlist-card-3d:hover .card-face img {
+  opacity: 1;
+}
+
+/* The 3D Bottom Edge containing the title */
+.playlist-card-3d::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: -1px; /* Slight overlap to prevent seams */
+  left: 0;
+  width: 100%;
+  height: 25px; /* Thickness of the record sleeve edge */
+  background: var(--edge-color, #e74c3c);
+  transform-origin: bottom;
+  transform: rotateX(-90deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  color: #111;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 10px;
+  box-shadow: inset 0 -5px 15px rgba(0,0,0,0.2);
+}
+
+.play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0;
+  transition: all 0.3s ease;
+  background: rgba(0,0,0,0.5);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.playlist-card-3d:hover .play-overlay {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.playlist-auth-prompt {
+  margin: auto;
+  padding: 40px;
+  text-align: center;
+  max-width: 80%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.spotify-login-btn {
+  background: #1DB954;
+  color: white;
+  padding: 15px 30px;
+  border-radius: 30px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 10px;
+}
+
+.close-btn {
+  background: rgba(255,255,255,0.1);
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+}
