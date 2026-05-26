@@ -31,7 +31,7 @@ const PlaylistStack: React.FC = () => {
         usePlayerStore.getState().setSpotifyToken(null);
         localStorage.removeItem('spotify_access_token');
       } else {
-        alert("Failed to load tracks. The playlist might be empty or private.");
+        alert(err.message || "Failed to load tracks. The playlist might be empty or private.");
       }
     } finally {
       setLoadingId(null);

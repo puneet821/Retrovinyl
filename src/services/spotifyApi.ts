@@ -36,7 +36,7 @@ export const fetchUserPlaylists = async (token: string): Promise<SpotifyPlaylist
 
 export const fetchPlaylistTracks = async (token: string, playlistId: string): Promise<any[]> => {
   try {
-    const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=50`, {
+    const response = await fetch(`https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks?limit=50`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -46,7 +46,14 @@ export const fetchPlaylistTracks = async (token: string, playlistId: string): Pr
       if (response.status === 401) {
         throw new Error('Spotify session expired.');
       }
-      throw new Error('Failed to fetch playlist tracks');
+      let errorMsg = 'Failed to fetch playlist tracks';
+      try {
+        const errData = await response.json();
+        if (errData.error?.message) {
+          errorMsg = `Spotify Error: ${errData.error.message}`;
+        }
+      } catch (e) {}
+      throw new Error(errorMsg);
     }
 
     const data = await response.json();
