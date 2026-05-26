@@ -16,7 +16,7 @@ import AddToPlaylistModal from './components/AddToPlaylistModal';
 import './App.css';
 
 function App() {
-  const { currentTrack, setTrack, isPlaying, pause, setPosition, setDuration, position, duration, spotifyToken, setSpotifyToken, setPlaylists, isPlaylistViewOpen, setIsPlaylistViewOpen } = usePlayerStore();
+  const { currentTrack, setTrack, isPlaying, setPosition, setDuration, position, duration, spotifyToken, setSpotifyToken, setPlaylists, isPlaylistViewOpen, setIsPlaylistViewOpen } = usePlayerStore();
   const activeTheme = useThemeStore((state) => state.activeTheme);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const [showConnectionModal, setShowConnectionModal] = React.useState(false);
