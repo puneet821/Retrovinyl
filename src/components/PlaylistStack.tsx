@@ -27,9 +27,11 @@ const PlaylistStack: React.FC = () => {
       setSelectedPlaylist(playlist);
     } catch (err: any) {
       console.error(err);
-      if (err.message?.includes('expired') || err.message?.includes('401')) {
+      const isAuthError = err.message?.includes('expired') || err.message?.includes('401') || err.message?.includes('Forbidden') || err.message?.includes('403');
+      if (isAuthError) {
         usePlayerStore.getState().setSpotifyToken(null);
         localStorage.removeItem('spotify_access_token');
+        alert("Spotify permissions missing or expired. Please click 'Connect Spotify' again to grant playlist access.");
       } else {
         alert(err.message || "Failed to load tracks. The playlist might be empty or private.");
       }
