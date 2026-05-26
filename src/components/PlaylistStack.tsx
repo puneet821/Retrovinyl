@@ -1,6 +1,7 @@
 import React from 'react';
 import { usePlayerStore } from '../stores/usePlayerStore';
-import { fetchPlaylistTracks, SpotifyPlaylist } from '../services/spotifyApi';
+import { fetchPlaylistTracks } from '../services/spotifyApi';
+import type { SpotifyPlaylist } from '../services/spotifyApi';
 import { initiateSpotifyLogin } from '../services/spotifyAuth';
 import { playSpotifyTrackViaSaavn } from '../services/api';
 import './PlaylistStack.css';
