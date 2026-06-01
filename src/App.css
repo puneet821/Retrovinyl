@@ -10,16 +10,17 @@
 
 .dynamic-bg {
   position: absolute;
-  top: -20%;
-  left: -20%;
-  width: 140%;
-  height: 140%;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
   background-size: cover;
   background-position: center;
-  filter: blur(90px) saturate(150%);
+  filter: blur(100px) saturate(250%) brightness(0.8) contrast(1.2);
   z-index: 1;
-  transition: background-image 0.5s ease-in-out;
+  transition: background-image 0.8s ease-in-out;
   pointer-events: none;
+  opacity: 0.8;
 }
 
 .dynamic-bg-overlay {
@@ -28,7 +29,13 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%);
+  background: linear-gradient(
+    to bottom, 
+    rgba(0,0,0,0.1) 0%, 
+    rgba(0,0,0,0.5) 40%, 
+    rgba(0,0,0,0.85) 80%,
+    #111 100%
+  );
   z-index: 2;
   pointer-events: none;
 }
