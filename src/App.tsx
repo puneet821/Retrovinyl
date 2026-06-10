@@ -160,6 +160,9 @@ function App() {
       // Play/pause changed
       if (state.isPlaying !== prevIsPlaying) {
         prevIsPlaying = state.isPlaying;
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.playbackState = state.isPlaying ? 'playing' : 'paused';
+        }
         if (state.isPlaying) {
           resumeAudioContext();
           audio.play().catch(e => console.warn('Playback prevented', e));
@@ -193,12 +196,14 @@ function App() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && audioRef.current) {
         const state = usePlayerStore.getState();
-        if (state.isPlaying && audioRef.current.paused) {
+        if (state.isPlaying) {
           resumeAudioContext();
-          audioRef.current.play().catch(e => {
-            console.warn('Resume after background failed', e);
-            usePlayerStore.getState().pause();
-          });
+          if (audioRef.current.paused) {
+            audioRef.current.play().catch(e => {
+              console.warn('Resume after background failed', e);
+              usePlayerStore.getState().pause();
+            });
+          }
         }
         if (state.currentTrack && audioRef.current.src !== state.currentTrack.url) {
           audioRef.current.src = state.currentTrack.url;
@@ -238,6 +243,10 @@ function App() {
         crossOrigin="anonymous"
         onTimeUpdate={() => {
           if (audioRef.current) setPosition(audioRef.current.currentTime);
+          // Attempt to keep Web Audio API alive in the background
+          if (usePlayerStore.getState().isPlaying) {
+            resumeAudioContext();
+          }
         }}
         onLoadedMetadata={() => {
           if (audioRef.current) setDuration(audioRef.current.duration);
