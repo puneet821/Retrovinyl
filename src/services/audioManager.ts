@@ -26,8 +26,8 @@ function createImpulseResponse(context: AudioContext, duration: number, decay: n
   return impulse;
 }
 
-let outputAudioElement: HTMLAudioElement | null = null;
-let mediaStreamDestination: MediaStreamAudioDestinationNode | null = null;
+let silentAudioElement: HTMLAudioElement | null = null;
+const silentMp3 = 'data:audio/mp3;base64,//OExAAAAANIAAAAAExBTUUzLjk4LjIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
 export function initializeAudioPipeline(audioElement: HTMLAudioElement) {
   if (audioContext) return;
@@ -41,9 +41,6 @@ export function initializeAudioPipeline(audioElement: HTMLAudioElement) {
     bassFilterNode = audioContext.createBiquadFilter();
     dryGainNode = audioContext.createGain();
     wetGainNode = audioContext.createGain();
-    
-    // Create a MediaStream destination to pipe audio back to an HTML5 Audio element
-    mediaStreamDestination = audioContext.createMediaStreamDestination();
 
     // Configure Bass Filter (Low-shelf boost)
     bassFilterNode.type = 'lowshelf';
@@ -62,30 +59,29 @@ export function initializeAudioPipeline(audioElement: HTMLAudioElement) {
     // Split: 
     // 1. Dry Path: bassFilter -> dryGain -> destination
     bassFilterNode.connect(dryGainNode);
-    dryGainNode.connect(mediaStreamDestination);
+    dryGainNode.connect(audioContext.destination);
 
     // 2. Wet Path: wetGain -> destination (convolver connects dynamically)
-    wetGainNode.connect(mediaStreamDestination);
+    wetGainNode.connect(audioContext.destination);
 
-    // Create a secondary hidden audio element to play the stream
-    // This is the CRITICAL fix for iOS background playback:
-    // iOS will suspend audioContext.destination in the background, but it will
-    // keep playing an HTMLAudioElement with a stream source.
-    if (!outputAudioElement) {
-      outputAudioElement = new Audio();
-      outputAudioElement.crossOrigin = 'anonymous';
-      outputAudioElement.srcObject = mediaStreamDestination.stream;
+    // To keep Web Audio API (and the EQ) running in the background on iOS,
+    // we must play a silent standard HTML5 audio element. iOS Safari will
+    // respect this as an active media session and prevent AudioContext suspension.
+    if (!silentAudioElement) {
+      silentAudioElement = new Audio(silentMp3);
+      silentAudioElement.loop = true;
+      silentAudioElement.crossOrigin = 'anonymous';
       
-      // Keep play/pause in sync with the main audio element
+      // Sync the silent background track with the main player
       audioElement.addEventListener('play', () => {
         if (audioContext?.state === 'suspended') {
           audioContext.resume();
         }
-        outputAudioElement?.play().catch(e => console.warn('Output audio play failed:', e));
+        silentAudioElement?.play().catch(() => {});
       });
       
       audioElement.addEventListener('pause', () => {
-        outputAudioElement?.pause();
+        silentAudioElement?.pause();
       });
     }
 
