@@ -20,7 +20,7 @@ function decryptUrl(encryptedUrl) {
   }
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   // Add CORS headers for Vercel
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
