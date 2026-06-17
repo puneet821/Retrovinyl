@@ -147,7 +147,7 @@ export const searchSongs = async (query: string, limit = 10): Promise<Track[]> =
 
   // Source 1: Our own server-side proxy (decrypts URLs directly from JioSaavn)
   try {
-    const res = await fetch(`/api/saavn-search?query=${q}`);
+    const res = await fetch(`/api/saavn-search?query=${encodeURIComponent(q)}`);
     if (res.ok) {
       const tracks: Track[] = await res.json();
       if (tracks.length > 0) return [...customResults, ...tracks];
