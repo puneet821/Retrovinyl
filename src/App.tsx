@@ -10,7 +10,7 @@ import { usePlayerStore } from './stores/usePlayerStore';
 import { useThemeStore } from './stores/useThemeStore';
 import { handleSpotifyCallback } from './services/spotifyAuth';
 import { fetchUserPlaylists } from './services/spotifyApi';
-import { getAutoPlayRecommendation, searchSongs } from './services/api';
+import { searchSongs } from './services/api';
 import PlaylistStack from './components/PlaylistStack';
 import { Settings, Menu, Search, Library, Plus } from 'lucide-react';
 import AddToPlaylistModal from './components/AddToPlaylistModal';
@@ -352,7 +352,7 @@ function App() {
         onLoadedMetadata={() => {
           if (audioRef.current) setDuration(audioRef.current.duration);
         }}
-        onEnded={handleTrackEnded}
+        onEnded={() => handleTrackEnded()}
         onPlay={() => {
           if (audioRef.current) {
             initializeAudioPipeline(audioRef.current);
