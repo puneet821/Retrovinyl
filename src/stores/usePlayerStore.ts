@@ -230,7 +230,6 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       const nextIndex = state.currentQueueIndex + 1;
       const nextTrack = state.currentQueue[nextIndex];
       
-      const shouldPlay = forcePlay && state.isPlaying !== false; // if it was already paused and forcePlay isn't strictly true, keep it paused, or if forcePlay is explicitly passed. Actually let's just use state.isPlaying if forcePlay isn't provided. Wait, standard playNext ALWAYS plays unless we specify otherwise.
       // Let's make it simpler: if forcePlay is true, play it. If false, keep current isPlaying state.
       const playState = forcePlay;
       
