@@ -63,7 +63,7 @@ interface PlayerState {
   setIsAutoPlayLoading: (loading: boolean) => void;
   setQueue: (tracks: Track[], startIndex: number) => void;
   appendAutoPlayTrack: (track: Track) => void;
-  playNext: (audioElement?: HTMLAudioElement, forcePlay?: boolean) => void;
+  playNext: (audioElement?: HTMLAudioElement) => void;
   playPrevious: (audioElement?: HTMLAudioElement) => void;
 }
 
@@ -225,26 +225,22 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     queueOrigin: 'autoplay'
   })),
   
-  playNext: (audioElement, forcePlay = true) => set((state) => {
+  playNext: (audioElement) => set((state) => {
     if (state.currentQueue.length > 0 && state.currentQueueIndex < state.currentQueue.length - 1) {
       const nextIndex = state.currentQueueIndex + 1;
       const nextTrack = state.currentQueue[nextIndex];
-      
-      const playState = forcePlay;
       
       // Synchronous background loading (skip for YouTube videos)
       if (audioElement && !nextTrack.url.startsWith('youtube:')) {
         audioElement.src = nextTrack.url;
         audioElement.load();
-        if (playState) {
-          audioElement.play().catch(e => console.warn('Sync playback prevented', e));
-        }
+        audioElement.play().catch(e => console.warn('Sync playback prevented', e));
       }
       
       return {
         currentQueueIndex: nextIndex,
         currentTrack: nextTrack,
-        isPlaying: playState,
+        isPlaying: true,
         position: 0
       };
     }

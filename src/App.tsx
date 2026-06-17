@@ -53,9 +53,8 @@ function App() {
     }
   }, []);
 
-  const handleTrackEnded = React.useCallback((forcePlay?: boolean | any) => {
-    const isPlaying = typeof forcePlay === 'boolean' ? forcePlay : usePlayerStore.getState().isPlaying;
-    usePlayerStore.getState().playNext(audioRef.current || undefined, isPlaying);
+  const handleTrackEnded = React.useCallback(() => {
+    usePlayerStore.getState().playNext(audioRef.current || undefined);
   }, []);
 
   const handleYtStateChange = React.useCallback((e: any) => {
@@ -427,8 +426,7 @@ function App() {
             onStateChange={handleYtStateChange}
             onError={(e) => {
               console.warn("YouTube player error. Skipping track...", e);
-              const isPlaying = usePlayerStore.getState().isPlaying;
-              handleTrackEnded(isPlaying);
+              handleTrackEnded();
             }}
           />
         )}
