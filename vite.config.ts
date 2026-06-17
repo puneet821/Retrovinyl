@@ -264,7 +264,7 @@ function saavnSearchProxy(): Plugin {
       const key = CryptoJS.enc.Utf8.parse(DECRYPT_KEY);
       const decrypted = CryptoJS.DES.decrypt({
         ciphertext: CryptoJS.enc.Base64.parse(encryptedUrl)
-      } as any, key, {
+      }, key, {
         mode: CryptoJS.mode.ECB,
         padding: CryptoJS.pad.Pkcs7
       });
@@ -301,7 +301,7 @@ function saavnSearchProxy(): Plugin {
               'Accept': 'application/json',
             },
           });
-          const searchData = await searchRes.json() as any;
+          const searchData = await searchRes.json();
           const songs = searchData?.results || [];
 
           if (!songs.length) {
